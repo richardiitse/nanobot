@@ -2,6 +2,10 @@
   <img src="nanobot_logo.png" alt="nanobot" width="500">
   <h1>nanobot: Ultra-Lightweight Personal AI Assistant</h1>
   <p>
+    <sub>This is a fork of <a href="https://github.com/HKUDS/nanobot">HKUDS/nanobot</a></sub><br>
+    <sub>Forked by: <a href="https://github.com/richardiitse">@richardiitse</a></sub>
+  </p>
+  <p>
     <a href="https://pypi.org/project/nanobot-ai/"><img src="https://img.shields.io/pypi/v/nanobot-ai" alt="PyPI"></a>
     <a href="https://pepy.tech/project/nanobot-ai"><img src="https://static.pepy.tech/badge/nanobot-ai" alt="Downloads"></a>
     <img src="https://img.shields.io/badge/python-≥3.11-blue" alt="Python">
@@ -67,12 +71,48 @@
   </tr>
 </table>
 
+## 🆕 MCP Integration (Enhanced)
+
+This fork includes enhanced web search capabilities via MCP (Model Context Protocol):
+
+### Web Search Providers
+
+| Provider | Description | Setup |
+|----------|-------------|-------|
+| **MCP (SearXNG)** | Self-hosted search via MCP protocol | Set `tools.webSearch.provider: "mcp"` + `SEARXNG_API_BASE` |
+| **Zhipu** | Chinese-optimized search API | Set `tools.webSearch.provider: "zhipu"` + add Zhipu API key |
+| **Brave** | Default global search (original) | Set `tools.webSearch.provider: "brave"` + add Brave API key |
+
+### Configuration Example
+
+```json
+{
+  "tools": {
+    "webSearch": {
+      "provider": "mcp",
+      "mcpTimeout": 30.0,
+      "maxResults": 5
+    }
+  },
+  "providers": {
+    "zhipu": {
+      "apiKey": "your-zhipu-api-key"
+    }
+  }
+}
+```
+
+### New Tools
+
+- `web_search_prime`: Enhanced web search via MCP server
+- MCP Client: Async stdio-based MCP server communication
+
 ## 📦 Install
 
 **Install from source** (latest features, recommended for development)
 
 ```bash
-git clone https://github.com/HKUDS/nanobot.git
+git clone https://github.com/richardiitse/nanobot.git
 cd nanobot
 pip install -e .
 ```
@@ -531,7 +571,7 @@ nanobot/
 
 PRs welcome! The codebase is intentionally small and readable. 🤗
 
-**Roadmap** — Pick an item and [open a PR](https://github.com/HKUDS/nanobot/pulls)!
+**Roadmap** — Pick an item and [open a PR](https://github.com/richardiitse/nanobot/pulls)!
 
 - [x] **Voice Transcription** — Support for Groq Whisper (Issue #13)
 - [ ] **Multi-modal** — See and hear (images, voice, video)
@@ -546,10 +586,12 @@ PRs welcome! The codebase is intentionally small and readable. 🤗
   <img src="https://contrib.rocks/image?repo=HKUDS/nanobot&max=100&columns=12" />
 </a>
 
+<em>Original project contributors at <a href="https://github.com/HKUDS/nanobot">HKUDS/nanobot</a></em>
 
 ## ⭐ Star History
 
 <div align="center">
+  <p>Please star the <a href="https://github.com/HKUDS/nanobot">original project</a>!</p>
   <a href="https://star-history.com/#HKUDS/nanobot&Date">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=HKUDS/nanobot&type=Date&theme=dark" />
@@ -561,7 +603,7 @@ PRs welcome! The codebase is intentionally small and readable. 🤗
 
 <p align="center">
   <em> Thanks for visiting ✨ nanobot!</em><br><br>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.nanobot&style=for-the-badge&color=00d4ff" alt="Views">
+  <a href="https://github.com/HKUDS/nanobot"><img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.nanobot&style=for-the-badge&color=00d4ff" alt="Views"></a>
 </p>
 
 
