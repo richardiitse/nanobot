@@ -24,6 +24,7 @@
 
 ## 📢 News
 
+- **2026-02-11** 🔧 Fixed Zhipu provider model prefix issue — `zhipu/glm-4` now correctly converts to `zai/glm-4` for LiteLLM compatibility. Model formats `zhipu/glm-4`, `glm-4`, and `zai/glm-4` all work correctly.
 - **2026-02-08** 🔧 Refactored Providers—adding a new LLM provider now takes just 2 simple steps! Check [here](#providers).
 - **2026-02-07** 🚀 Released v0.1.3.post5 with Qwen support & several key improvements! Check [here](https://github.com/HKUDS/nanobot/releases/tag/v0.1.3.post5) for details.
 - **2026-02-06** ✨ Added Moonshot/Kimi provider, Discord integration, and enhanced security hardening!
@@ -433,6 +434,9 @@ Config file: `~/.nanobot/config.json`
 | `dashscope` | LLM (Qwen) | [dashscope.console.aliyun.com](https://dashscope.console.aliyun.com) |
 | `moonshot` | LLM (Moonshot/Kimi) | [platform.moonshot.cn](https://platform.moonshot.cn) |
 | `zhipu` | LLM (Zhipu GLM) | [open.bigmodel.cn](https://open.bigmodel.cn) |
+
+> [!NOTE]
+> **Zhipu Model Format**: You can use any of these formats: `zhipu/glm-4`, `glm-4`, or `zai/glm-4`. They will all be converted to `zai/glm-4` for LiteLLM compatibility. |
 | `vllm` | LLM (local, any OpenAI-compatible server) | — |
 
 <details>
