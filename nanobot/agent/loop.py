@@ -15,9 +15,11 @@ from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.filesystem import ReadFileTool, WriteFileTool, EditFileTool, ListDirTool
 from nanobot.agent.tools.shell import ExecTool
 from nanobot.agent.tools.web import WebSearchTool, WebFetchTool
+from nanobot.agent.tools.zhipu_search import ZhipuWebSearchTool
 from nanobot.agent.tools.message import MessageTool
 from nanobot.agent.tools.spawn import SpawnTool
 from nanobot.agent.tools.cron import CronTool
+from nanobot.agent.tools.mcp_web_search import WebSearchPrimeTool
 from nanobot.agent.subagent import SubagentManager
 from nanobot.session.manager import SessionManager
 
@@ -46,6 +48,9 @@ class AgentLoop:
         cron_service: "CronService | None" = None,
         restrict_to_workspace: bool = False,
         session_manager: SessionManager | None = None,
+        web_search_provider: str = "brave",
+        web_search_mcp_timeout: float = 30.0,
+        zhipu_api_key: str | None = None,
     ):
         from nanobot.config.schema import ExecToolConfig
         from nanobot.cron.service import CronService
@@ -58,7 +63,10 @@ class AgentLoop:
         self.exec_config = exec_config or ExecToolConfig()
         self.cron_service = cron_service
         self.restrict_to_workspace = restrict_to_workspace
-        
+        self.web_search_provider = web_search_provider
+        self.web_search_mcp_timeout = web_search_mcp_timeout
+        self.zhipu_api_key = zhipu_api_key
+
         self.context = ContextBuilder(workspace)
         self.sessions = session_manager or SessionManager(workspace)
         self.tools = ToolRegistry()
@@ -70,8 +78,10 @@ class AgentLoop:
             brave_api_key=brave_api_key,
             exec_config=self.exec_config,
             restrict_to_workspace=restrict_to_workspace,
+            web_search_provider=web_search_provider,
+            zhipu_api_key=zhipu_api_key,
         )
-        
+
         self._running = False
         self._register_default_tools()
     
@@ -83,26 +93,39 @@ class AgentLoop:
         self.tools.register(WriteFileTool(allowed_dir=allowed_dir))
         self.tools.register(EditFileTool(allowed_dir=allowed_dir))
         self.tools.register(ListDirTool(allowed_dir=allowed_dir))
-        
+
         # Shell tool
         self.tools.register(ExecTool(
             working_dir=str(self.workspace),
             timeout=self.exec_config.timeout,
             restrict_to_workspace=self.restrict_to_workspace,
         ))
-        
-        # Web tools
-        self.tools.register(WebSearchTool(api_key=self.brave_api_key))
+
+        # Web tools - register based on provider configuration
+        if self.web_search_provider == "zhipu":
+            # Use Zhipu web search API
+            self.tools.register(ZhipuWebSearchTool(api_key=self.zhipu_api_key))
+            logger.info("Registered Zhipu web search tool (web_search)")
+        elif self.web_search_provider == "mcp":
+            # Use MCP web search (mcp-web-search server)
+            self.tools.register(WebSearchPrimeTool(timeout=self.web_search_mcp_timeout))
+            logger.info("Registered MCP web search tool (web_search_prime)")
+        else:
+            # Use Brave Search API (default)
+            self.tools.register(WebSearchTool(api_key=self.brave_api_key))
+            logger.info("Registered Brave web search tool (web_search)")
+
+        # Web fetch tool (always available, uses readability-lxml)
         self.tools.register(WebFetchTool())
-        
+
         # Message tool
         message_tool = MessageTool(send_callback=self.bus.publish_outbound)
         self.tools.register(message_tool)
-        
+
         # Spawn tool (for subagents)
         spawn_tool = SpawnTool(manager=self.subagents)
         self.tools.register(spawn_tool)
-        
+
         # Cron tool (for scheduling)
         if self.cron_service:
             self.tools.register(CronTool(self.cron_service))

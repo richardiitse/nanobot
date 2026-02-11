@@ -334,6 +334,9 @@ def gateway(
         cron_service=cron,
         restrict_to_workspace=config.tools.restrict_to_workspace,
         session_manager=session_manager,
+        web_search_provider=config.tools.web.search.provider,
+        web_search_mcp_timeout=config.tools.web.search.mcp_timeout,
+        zhipu_api_key=config.tools.web.search.zhipu_api_key or None,
     )
     
     # Set cron callback (needs agent)
@@ -428,6 +431,9 @@ def agent(
         brave_api_key=config.tools.web.search.api_key or None,
         exec_config=config.tools.exec,
         restrict_to_workspace=config.tools.restrict_to_workspace,
+        web_search_provider=config.tools.web.search.provider,
+        web_search_mcp_timeout=config.tools.web.search.mcp_timeout,
+        zhipu_api_key=config.tools.web.search.zhipu_api_key or None,
     )
     
     if message:

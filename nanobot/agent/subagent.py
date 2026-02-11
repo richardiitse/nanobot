@@ -15,6 +15,7 @@ from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.filesystem import ReadFileTool, WriteFileTool, ListDirTool
 from nanobot.agent.tools.shell import ExecTool
 from nanobot.agent.tools.web import WebSearchTool, WebFetchTool
+from nanobot.agent.tools.zhipu_search import ZhipuWebSearchTool
 
 
 class SubagentManager:
@@ -35,6 +36,8 @@ class SubagentManager:
         brave_api_key: str | None = None,
         exec_config: "ExecToolConfig | None" = None,
         restrict_to_workspace: bool = False,
+        web_search_provider: str = "brave",
+        zhipu_api_key: str | None = None,
     ):
         from nanobot.config.schema import ExecToolConfig
         self.provider = provider
@@ -44,6 +47,8 @@ class SubagentManager:
         self.brave_api_key = brave_api_key
         self.exec_config = exec_config or ExecToolConfig()
         self.restrict_to_workspace = restrict_to_workspace
+        self.web_search_provider = web_search_provider
+        self.zhipu_api_key = zhipu_api_key
         self._running_tasks: dict[str, asyncio.Task[None]] = {}
     
     async def spawn(
@@ -107,7 +112,11 @@ class SubagentManager:
                 timeout=self.exec_config.timeout,
                 restrict_to_workspace=self.restrict_to_workspace,
             ))
-            tools.register(WebSearchTool(api_key=self.brave_api_key))
+            # Register web search tool based on provider
+            if self.web_search_provider == "zhipu":
+                tools.register(ZhipuWebSearchTool(api_key=self.zhipu_api_key))
+            else:
+                tools.register(WebSearchTool(api_key=self.brave_api_key))
             tools.register(WebFetchTool())
             
             # Build messages with subagent-specific prompt

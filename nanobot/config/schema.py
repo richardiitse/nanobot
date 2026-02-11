@@ -100,8 +100,11 @@ class GatewayConfig(BaseModel):
 
 class WebSearchConfig(BaseModel):
     """Web search tool configuration."""
-    api_key: str = ""  # Brave Search API key
+    provider: str = "brave"  # Provider: "brave", "mcp", or "zhipu"
+    api_key: str = ""  # Brave Search API key (for brave provider)
     max_results: int = 5
+    mcp_timeout: float = 30.0  # Timeout for MCP server (for mcp provider)
+    zhipu_api_key: str = ""  # Zhipu API key (for zhipu provider)
 
 
 class WebToolsConfig(BaseModel):
